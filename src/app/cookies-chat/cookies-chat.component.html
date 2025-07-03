@@ -1,20 +1,21 @@
 <!-- cookies recipe chat-->
 <div class="chat-container">
-        
-    <div class="chat-body">
-      <div class="message user">
-        <p>Hi! I'd like to bake some cookies. Any suggestions?</p>
-      </div>
-      <div class="message bot">
-        <p>Sure! What kind of cookies are you in the mood for?</p>
-      </div>
-      <div *ngIf="loading">Loading...</div> 
-    <div *ngFor="let item of chatHistory; let i = index" class="message" >
+
+  <div class="chat-body">
+    <div class="message user">
+      <p>Hi! I'd like to bake some cookies. Any suggestions?</p>
+    </div>
+    <div class="message bot">
+      <p>Sure! What kind of cookies are you in the mood for?</p>
+    </div>
+    <div *ngIf="loading">Loading...</div>
+    <div *ngFor="let item of chatHistory()" class="message">
       <p *ngIf="item.parts.length > 0" [innerHTML]="item.parts"></p>
     </div>
-    </div>
-    <div class="chat-footer">
-      <input type="text" placeholder="Type your message..."  [(ngModel)]="message" (keyup.enter)="handleSubmit()" />
-      <button (click)="handleSubmit()">Send</button>
-    </div>
   </div>
+  <div class="chat-footer">
+    <input type="text" placeholder="Type your message..." [value]="message()" (input)="handleSetMessage($event)"
+      (keyup.enter)="handleSubmit()" />
+    <button (click)="handleSubmit()">Send</button>
+  </div>
+</div>
