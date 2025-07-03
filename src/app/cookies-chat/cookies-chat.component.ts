@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import { environment } from './../../environments/environment';
 import { NgForOf, NgIf } from '@angular/common';
@@ -12,9 +12,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './cookies-chat.component.css'
 })
 export class CookiesChatComponent implements OnInit {
-  loading = false;
-  chatHistory: { parts: string, role: string }[] = [{ parts: '', role: '' }];
-  message = 'You are an expert AI cookie baking model. I want to bake cookies. Can you help me with a recipe?';
+  loading = signal(false);
+  chatHistory = signal([{ parts: '', role: '' }]);
+  message = signal('You are an expert AI cookie baking model. I want to bake cookies. Can you help me with a recipe?');
   API_KEY = environment.API_KEY;
   MODEL_NAME = 'gemini-1.5-flash';
 
@@ -25,7 +25,7 @@ export class CookiesChatComponent implements OnInit {
   constructor() {
     this.genAI = new GoogleGenerativeAI(this.API_KEY);
     this.model = this.genAI.getGenerativeModel({
-      model: this.MODEL_NAME,
+      model: 'gemini-1.5-pro',
       generationConfig: {
         temperature: 1,
         topP: 0.95,
@@ -47,12 +47,12 @@ export class CookiesChatComponent implements OnInit {
   }
 
   addMessageToHistory(role: string, message: string): void {
-    this.chatHistory = [...this.chatHistory, { parts: message, role }];
+    this.chatHistory.set([...this.chatHistory(), { parts: message, role }]);
   }
 
   async fetchData(): Promise<void> {
-    this.loading = true;
-    this.addMessageToHistory('user', this.message);
+    this.loading.set(true);
+    this.addMessageToHistory('user', this.message());
     const result = await this.chat.sendMessage(this.message);
     const response = result.response.text()
       .replace(/\*\*/g, '<b>')
@@ -60,8 +60,8 @@ export class CookiesChatComponent implements OnInit {
       .replace(/\_/g, '<i>')
       .replace(/\n/g, '<br>');
     this.addMessageToHistory('model', response);
-    this.message = '';
-    this.loading = false;
+    this.message.set('');
+    this.loading.set(false);
   }
 
   handleSubmit(): void {
@@ -69,6 +69,6 @@ export class CookiesChatComponent implements OnInit {
   }
 
   handleSetMessage(event: any): void {
-    this.message = event.target.value;
+    this.message.set(event.target.value);
   }
 }
