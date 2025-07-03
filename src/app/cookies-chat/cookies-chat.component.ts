@@ -5,11 +5,11 @@ import { NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-cookies-chat',
-  standalone: true,
-  imports: [FormsModule, NgForOf, NgIf],
-  templateUrl: './cookies-chat.component.html',
-  styleUrl: './cookies-chat.component.css'
+    selector: 'app-cookies-chat',
+    imports: [FormsModule, NgForOf, NgIf],
+    standalone: true,
+    templateUrl: './cookies-chat.component.html',
+    styleUrls: ['./cookies-chat.component.css']
 })
 export class CookiesChatComponent implements OnInit {
   loading = signal(false);
