@@ -16,7 +16,7 @@ export class CookiesChatComponent implements OnInit {
   chatHistory = signal([{ parts: '', role: '' }]);
   message = signal('You are an expert AI cookie baking model. I want to bake cookies. Can you help me with a recipe?');
   API_KEY = environment.API_KEY;
-  MODEL_NAME = 'gemini-1.5-flash';
+  MODEL_NAME = 'gemini-2.0-flash';
 
   private genAI: GoogleGenerativeAI;
   private model;
@@ -25,7 +25,7 @@ export class CookiesChatComponent implements OnInit {
   constructor() {
     this.genAI = new GoogleGenerativeAI(this.API_KEY);
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-pro',
+      model: 'gemini-2.0-flash',
       generationConfig: {
         temperature: 1,
         topP: 0.95,
@@ -53,16 +53,20 @@ export class CookiesChatComponent implements OnInit {
   async fetchData(): Promise<void> {
     this.loading.set(true);
     this.addMessageToHistory('user', this.message());
-    const result = await this.chat.sendMessage(this.message);
+    
+    const result = await this.chat.sendMessage(this.message());
+  
     const response = result.response.text()
       .replace(/\*\*/g, '<b>')
       .replace(/\*/g, '<li>')
       .replace(/\_/g, '<i>')
       .replace(/\n/g, '<br>');
+  
     this.addMessageToHistory('model', response);
     this.message.set('');
     this.loading.set(false);
   }
+  
 
   handleSubmit(): void {
     this.fetchData();
